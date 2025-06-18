@@ -4,6 +4,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/cardgeneration
     driverClassName: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     validationQuery: SELECT 1
   h2:
     console:
