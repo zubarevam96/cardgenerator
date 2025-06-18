@@ -1,5 +1,6 @@
 package com.kaleidoscope.cardgenerator.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 
@@ -13,6 +14,7 @@ public class CardTemplate {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private User user;
 
     private String cardStructure;
