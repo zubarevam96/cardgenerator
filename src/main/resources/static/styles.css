@@ -1,0 +1,17 @@
+
+#container {
+    display: flex;
+}
+#edit-section, #preview-section, #saved-templates-section {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 5px;
+}
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+button {
+    margin: 5px;
+}
