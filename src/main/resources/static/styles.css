@@ -1,17 +1,49 @@
-
 #container {
     display: flex;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden; /* Prevent scrollbars */
 }
-#edit-section, #preview-section, #saved-templates-section {
-    flex: 1;
+
+#edit-section {
+    width: 400px; /* Fixed width for edit section */
     padding: 10px;
     border: 1px solid #ccc;
     margin: 5px;
+    overflow: auto; /* Allow scrolling if content overflows */
 }
+
+#preview-section {
+    flex: 1; /* Take remaining space */
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 5px;
+    overflow: auto; /* Allow scrolling if content overflows */
+}
+
+#saved-templates-section {
+    width: 300px; /* Fixed width for saved templates section */
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 5px;
+    overflow: auto; /* Allow scrolling if content overflows */
+}
+
 textarea {
     width: 100%;
     box-sizing: border-box;
 }
+
 button {
     margin: 5px;
+}
+
+.resize-handle {
+    width: 5px;
+    background: #ccc;
+    cursor: ew-resize;
+    flex-shrink: 0; /* Prevent handle from shrinking */
+}
+
+.resize-handle:hover {
+    background: #aaa;
 }
