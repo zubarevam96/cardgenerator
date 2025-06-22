@@ -1,6 +1,5 @@
 package com.kaleidoscope.cardgenerator.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -18,8 +17,10 @@ public class CardTemplate {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User user;
 
+    @Column(columnDefinition="TEXT")
     private String cardStructure;
 
+    @Column(columnDefinition="TEXT")
     private String cardValue;
 
 
