@@ -1,24 +1,42 @@
 const htmlInput = document.getElementById('html-input');
 const jsonInput = document.getElementById('json-input');
 const previewArea = document.getElementById('preview-area');
+const editSection = document.getElementById('edit-section');
+let lastValidPreview = ''; // Store the last valid preview HTML
 
 function updatePreview() {
-    const html = htmlInput.value;
-    const jsonText = jsonInput.value;
+    const html = htmlInput.value.trim();
+    const jsonText = jsonInput.value.trim();
     let data;
-    try {
-        data = JSON.parse(jsonText);
-    } catch (e) {
-        previewArea.innerHTML = 'Invalid JSON';
+
+    // Basic validation: check if HTML is non-empty
+    if (!html) {
+        editSection.style.border = '2px solid red';
+        previewArea.innerHTML = lastValidPreview || 'No valid preview available';
         return;
     }
+
+    // Validate JSON
+    try {
+        data = JSON.parse(jsonText || '{}');
+    } catch (e) {
+        editSection.style.border = '2px solid red';
+        previewArea.innerHTML = lastValidPreview || 'No valid preview available';
+        return;
+    }
+
+    // If both inputs are valid, update preview and reset border
     let previewHtml = html;
     for (const key in data) {
         const placeholder = '{' + key + '}';
         const value = data[key];
         previewHtml = previewHtml.replace(new RegExp(placeholder, 'g'), value);
     }
+
+    // Update last valid state and preview
+    lastValidPreview = previewHtml;
     previewArea.innerHTML = previewHtml;
+    editSection.style.border = '1px solid #ccc'; // Reset to default border
 }
 
 function loadTemplateIntoEditor(button) {
@@ -32,7 +50,7 @@ function loadTemplateIntoEditor(button) {
     document.getElementById('html-input').value = cardStructure || '';
     document.getElementById('json-input').value = cardValue || '';
 
-    updatePreview()
+    updatePreview(); // Update preview with loaded template
 }
 
 function deleteTemplate(button) {
@@ -97,7 +115,6 @@ function updateTemplate() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-
     htmlInput.addEventListener('input', updatePreview);
     jsonInput.addEventListener('input', updatePreview);
     updatePreview(); // Initial call to render preview with default values, if any
