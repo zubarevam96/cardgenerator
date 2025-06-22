@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Card Templates</title>
+    <style>
+        #container {
+            display: flex;
+        }
+        #edit-section, #preview-section, #saved-templates-section {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="edit-section">
+        <h2>Edit Template</h2>
+        <label for="html-input">HTML:</label>
+        <textarea id="html-input" rows="10"></textarea>
+        <label for="json-input">JSON:</label>
+        <textarea id="json-input" rows="10"></textarea>
+        <label for="name-input">Name:</label>
+        <input type="text" id="name-input" required />
+        <button type="button" id="save-button" onclick="updateTemplate()">Save Template</button>
+    </div>
+    <div id="preview-section">
+        <h2>Preview</h2>
+        <div id="preview-area"></div>
+    </div>
+    <div id="saved-templates-section">
+        <h2>Saved Templates</h2>
+        <ul id="templates-list">
+            <li th:each="template : ${templates}">
+                <span th:text="${template.name}"></span>
+                <button th:attr="data-card-name=${template.name},data-card-structure=${template.cardStructure},data-card-value=${template.cardValue}"
+                        onclick="loadTemplateIntoEditor(this)">Load</button>
+                <button th:attr="data-card-name=${template.name},data-card-id=${template.id}" onclick="deleteTemplate(this)">Delete</button>
+            </li>
+        </ul>
+    </div>
+</div>
+<script src="/scripts.js"></script>
+</script>
+</body>
+</html>
