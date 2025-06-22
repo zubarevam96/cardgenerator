@@ -1,3 +1,26 @@
+const htmlInput = document.getElementById('html-input');
+const jsonInput = document.getElementById('json-input');
+const previewArea = document.getElementById('preview-area');
+
+function updatePreview() {
+    const html = htmlInput.value;
+    const jsonText = jsonInput.value;
+    let data;
+    try {
+        data = JSON.parse(jsonText);
+    } catch (e) {
+        previewArea.innerHTML = 'Invalid JSON';
+        return;
+    }
+    let previewHtml = html;
+    for (const key in data) {
+        const placeholder = '{' + key + '}';
+        const value = data[key];
+        previewHtml = previewHtml.replace(new RegExp(placeholder, 'g'), value);
+    }
+    previewArea.innerHTML = previewHtml;
+}
+
 function loadTemplateIntoEditor(button) {
     // Get the data attributes from the button
     var name = button.getAttribute('data-card-name');
@@ -8,8 +31,9 @@ function loadTemplateIntoEditor(button) {
     document.getElementById('name-input').value = name || '';
     document.getElementById('html-input').value = cardStructure || '';
     document.getElementById('json-input').value = cardValue || '';
-}
 
+    updatePreview()
+}
 
 function deleteTemplate(button) {
     // Get the template ID from the data-card-id attribute
@@ -71,3 +95,10 @@ function updateTemplate() {
         alert('Failed to save template');
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    htmlInput.addEventListener('input', updatePreview);
+    jsonInput.addEventListener('input', updatePreview);
+    updatePreview(); // Initial call to render preview with default values, if any
+});
