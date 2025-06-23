@@ -61,7 +61,7 @@ function updatePreview() {
 
         // Wrap in a grid container
         previewHtml = `
-            <div style="display: grid; grid-template-columns: repeat(${columns}, 1fr); gap: 10px;">
+            <div style="display: grid; grid-template-columns: repeat(${columns}, 1fr); gap: 0px;">
                 ${renderedItems.join('')}
             </div>
         `;
