@@ -29,8 +29,12 @@ public class CardGeneratorController {
     }
 
     @GetMapping("/cards")
-    @ResponseBody
-    public List<CardTemplate> getCardTemplates() {
+    public String getCardsList(Model model) {
+        model.addAttribute("templates", getCardTemplates());
+        return "card-templates :: templatesListFragment";
+    }
+
+    private List<CardTemplate> getCardTemplates() {
         return cardTemplateService.getAllForCurrentUser();
     }
 

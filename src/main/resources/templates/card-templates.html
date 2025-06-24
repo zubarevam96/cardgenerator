@@ -22,19 +22,20 @@
         <h2>Preview</h2>
         <div id="preview-area" style="all: initial; background-color: white">
         </div>
-        <label for="columns-input">Columns: </label>
-        <input type="number" id="columns-input" value="10" min="1" style="width: 60px; margin-right: 10">
+        <div style="visibility: collapse">
+            <label for="columns-input">Columns: </label>
+            <input type="number" id="columns-input" value="10" min="1" style="width: 60px; margin-right: 10">
+        </div>
     </div>
     <div id="saved-templates-section">
         <h2>Saved Templates</h2>
-        <ul id="templates-list">
-            <li th:each="template : ${templates}">
-                <span th:text="${template.name}"></span>
-                <button th:attr="data-card-name=${template.name},data-card-structure=${template.cardStructure},data-card-value=${template.cardValue}"
-                        onclick="loadTemplateIntoEditor(this)">Load</button>
-                <button th:attr="data-card-name=${template.name},data-card-id=${template.id}" onclick="deleteTemplate(this)">Delete</button>
-            </li>
-        </ul>
+        <ul id="templates-list" th:fragment="templatesListFragment">
+        <li th:each="template : ${templates}">
+            <span th:text="${template.name}"></span>
+            <button th:attr="data-card-name=${template.name}, data-card-structure=${template.cardStructure}, data-card-value=${template.cardValue}" onclick="loadTemplateIntoEditor(this)">Load</button>
+            <button th:attr="data-card-id=${template.id}" onclick="deleteTemplate(this)">Delete</button>
+        </li>
+    </ul>
     </div>
 </div>
 <script src="/scripts.js"></script>
