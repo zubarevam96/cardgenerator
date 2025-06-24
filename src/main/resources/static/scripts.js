@@ -116,17 +116,29 @@ async function cookImage() {
     cookButton.textContent = 'Cooking...';
     cookButton.disabled = true;
 
-    const previewArea = document.getElementById('preview-area');
-    // We create a clone of the node to avoid modifying the live preview while processing images.
-    const clone = previewArea.cloneNode(true);
+    // The element that hosts the shadow DOM.
+    const shadowHost = document.getElementById('preview-area');
 
-    // The clone must be in the DOM to be rendered, but we can make it invisible.
-    clone.style.position = 'absolute';
-    clone.style.left = '-9999px';
-    clone.style.top = '0px';
-    clone.style.width = `${previewArea.scrollWidth}px`; // Ensure it has a defined width
-    document.body.appendChild(clone);
+    // Create a temporary container to hold a clone of the ShadowRoot's content for rendering.
+    // It's placed off-screen to be invisible to the user.
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '0px';
 
+    // Set the container's size to match the shadow host's actual rendered size.
+    // This is crucial for html2canvas to calculate the layout correctly.
+    container.style.width = `${shadowHost.width}px`;
+    container.style.height = `${shadowHost.height}px`;
+
+    // **FIX**: Iterate over the child nodes of the ShadowRoot and clone them individually
+    // into the container, as the ShadowRoot itself is not clonable.
+    shadowHost.shadowRoot.childNodes.forEach(child => {
+        container.appendChild(child.cloneNode(true));
+    });
+
+    // Append the container to the body so it gets rendered by the browser.
+    document.body.appendChild(container);
 
     // Helper function to fetch an image via a CORS proxy and convert it to a data URL.
     const convertImgToDataURL = async (imgElement) => {
@@ -135,6 +147,11 @@ async function cookImage() {
         // NOTE: Public proxies are for development/demonstration only and are not reliable for production use.
         const proxyUrl = 'https://api.allorigins.win/raw?url=';
         const imageUrl = imgElement.src;
+
+        // Don't process images that are already data URLs
+        if (imageUrl.startsWith('data:')) {
+            return Promise.resolve();
+        }
 
         try {
             // Fetch the image through the proxy
@@ -162,24 +179,27 @@ async function cookImage() {
     };
 
 
-    const images = Array.from(clone.querySelectorAll('img'));
+    const images = Array.from(container.querySelectorAll('img'));
     const imagePromises = images.map(img => convertImgToDataURL(img));
 
     try {
         // Wait for all images to be fetched and replaced with data URLs
         await Promise.all(imagePromises);
 
-        // Now that images are embedded, generate the canvas from our invisible clone.
-        const canvas = await html2canvas(clone, {
-            useCORS: true, // Still useful for other cross-origin content like web fonts
+        // A small delay can help ensure all content (like web fonts) is rendered.
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Generate the canvas from the container
+        const canvas = await html2canvas(container, {
+            useCORS: true, // Useful for other cross-origin content like web fonts
             allowTaint: true, // Allows cross-origin images to taint the canvas
-            logging: false, // Set to true for debugging
+            logging: true, // Enable logging for debugging purposes
             scale: 2, // Render at a higher resolution for better quality
         });
 
         // Create a temporary link to trigger the download of the canvas image.
         const link = document.createElement('a');
-        link.download = 'cooked-image.png';
+        link.download = `${document.getElementById('name-input').value || 'download'}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
 
@@ -187,8 +207,8 @@ async function cookImage() {
         console.error('Error during the image cooking process:', error);
         alert('Failed to generate the image. See the browser console for more details.');
     } finally {
-        // Clean up: remove the cloned element and restore the button's state.
-        document.body.removeChild(clone);
+        // Clean up by removing the temporary container from the body
+        document.body.removeChild(container);
         cookButton.textContent = originalButtonText;
         cookButton.disabled = false;
     }
