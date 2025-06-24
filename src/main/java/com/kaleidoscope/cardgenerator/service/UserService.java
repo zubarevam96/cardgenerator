@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -29,12 +28,8 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JWTService jwtService;
-
-    public User register(User user) {
+    public User save(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            //TODO: looks like this error cannot be read by unauthorized user
             throw new UserAlreadyExistAuthenticationException(
                     "User with name '" + user.getUsername() + "' already exists");
         }
@@ -48,15 +43,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public String verify(User user) {
-        Authentication authentication =
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                        user.getUsername(), user.getPassword()));
+    public boolean authenticate(String username, String password) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password));
 
-        if (authentication.isAuthenticated())
-            return jwtService.generateToken(user.getUsername());
-
-        return "fail";
+        return authentication.isAuthenticated();
     }
 
     public User getCurrentUser() {
@@ -68,5 +59,9 @@ public class UserService {
     public User getByUsername(String username) {
        return userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("User with name '" + username + "' not found"));
+    }
+
+    public boolean usernameExists(String username) {
+        return userRepository.existsByUsername(username);
     }
 }

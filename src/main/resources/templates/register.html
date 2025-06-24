@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Register</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { padding: 10px 20px; background-color: #28a745; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #218838; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+<h2>Register</h2>
+<div th:if="${error}" class="error" th:text="${error}">
+  Registration error
+</div>
+<form th:action="@{/register}" method="post">
+  <div class="form-group">
+    <label for="username-input">Username:</label>
+    <input type="text" id="username-input" name="username" required/>
+  </div>
+  <div class="form-group">
+    <label for="password-input">Password:</label>
+    <input type="password" id="password-input" name="password" required/>
+    <label for="password-confirm-input">Confirm password:</label>
+    <input type="password" id="password-confirm-input" name="password-confirm" required/>
+  </div>
+  <button type="submit">Register</button>
+</form>
+<p>Already have an account? <a th:href="@{/login}">Login here</a></p>
+</body>
+</html>

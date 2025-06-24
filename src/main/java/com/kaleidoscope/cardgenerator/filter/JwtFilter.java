@@ -4,6 +4,7 @@ import com.kaleidoscope.cardgenerator.service.AppUserDetailsService;
 import com.kaleidoscope.cardgenerator.service.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,17 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-        String requestToken = null;
+        String requestToken = fetchJwt(request.getCookies());
         String username = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            requestToken = authHeader.substring(7);
-            username = jwtService.extractUsername(requestToken);
+        if (requestToken != null) {
+            try {
+                username = jwtService.extractUsername(requestToken);
+            } catch (Exception e) {
+                logger.debug("Failed to extract username from JWT: " + e.getMessage());
+            }
         }
+
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = context.getBean(AppUserDetailsService.class).loadUserByUsername(username);
@@ -49,5 +53,15 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String fetchJwt(Cookie[] cookies) {
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwt".equals(cookie.getName()))
+                    return cookie.getValue();
+            }
+        }
+        return null;
     }
 }

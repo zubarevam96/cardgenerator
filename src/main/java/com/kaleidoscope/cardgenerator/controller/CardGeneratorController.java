@@ -21,7 +21,7 @@ public class CardGeneratorController {
     @Autowired
     UserDetailsService userDetailsService;
 
-    @GetMapping("/")
+    @GetMapping
     public String basePage(Model model) {
         model.addAttribute("templates", getCardTemplates());
 
@@ -44,7 +44,7 @@ public class CardGeneratorController {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/")
+    @PutMapping
     @ResponseBody
     public CardTemplate createCardTemplate(@RequestBody CardTemplate cardTemplate) {
 
