@@ -2,15 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Login</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; }
-    input { width: 100%; padding: 8px; box-sizing: border-box; }
-    button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
-    button:hover { background-color: #0056b3; }
-    .error { color: red; }
-  </style>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <h2>Login</h2>
@@ -27,7 +19,7 @@
     <input type="password" id="password-input" name="password" required/>
   </div>
   <button type="submit">Login</button>
+  <p>Don't have an account? <a th:href="@{/register}">Register here</a></p>
 </form>
-<p>Don't have an account? <a th:href="@{/register}">Register here</a></p>
 </body>
 </html>
