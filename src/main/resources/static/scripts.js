@@ -1,14 +1,24 @@
 const htmlInput = document.getElementById('html-input');
 const jsonInput = document.getElementById('json-input');
-const previewArea = document.getElementById('preview-area');
 const editSection = document.getElementById('edit-section');
 const columnsInput = document.getElementById('columns-input');
+const previewArea = document.getElementById('preview-area').attachShadow({ mode: 'open' });
+
 let lastValidPreview = ''; // Store the last valid preview HTML
 
 /**
  * Updates the preview area based on the HTML and JSON input.
  */
 function updatePreview() {
+    const style = document.createElement('style');
+    style.textContent = `
+        :host {
+            all: initial; /* Reset all inherited styles */
+            display: block; /* Ensure proper layout */
+        }
+    `;
+    previewArea.appendChild(style);
+
     const html = htmlInput.value.trim();
     const jsonText = jsonInput.value.trim();
     let parsedData;
@@ -261,6 +271,7 @@ function updateTemplate() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
     htmlInput.addEventListener('input', updatePreview);
     jsonInput.addEventListener('input', updatePreview);
     columnsInput.addEventListener('input', updatePreview);
