@@ -44,7 +44,7 @@ public class CardGeneratorController {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping
+    @PutMapping("/")
     @ResponseBody
     public CardTemplate createCardTemplate(@RequestBody CardTemplate cardTemplate) {
 
