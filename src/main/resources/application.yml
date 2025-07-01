@@ -4,17 +4,14 @@ spring:
   thymeleaf:
     cache: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/cardgeneration
+    url: jdbc:postgresql://postgres:5431/card_generator_db
     driverClassName: org.postgresql.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     validationQuery: SELECT 1
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+  batch.jdbc.initialize-schema: always
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate.ddl-auto: update
     show-sql: true
     properties.hibernate.jdbc.lob.non_contextual_creation: true
