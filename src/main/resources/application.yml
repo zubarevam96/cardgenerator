@@ -3,8 +3,12 @@ server.port: 8080
 spring:
   thymeleaf:
     cache: false
+    prefix: file:/app/templates/
+  web:
+    resources:
+      static-locations: file:/app/static/
   datasource:
-    url: jdbc:postgresql://postgres:5431/card_generator_db
+    url: jdbc:postgresql://db:5432/card_generator_db
     driverClassName: org.postgresql.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
