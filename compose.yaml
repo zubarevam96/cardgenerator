@@ -12,7 +12,7 @@ services:
     build:
       context: .
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - db
     environment:
@@ -30,6 +30,28 @@ services:
         - action: sync
           path: ./src/main/resources/templates
           target: /app/templates
+
+  keycloak_server:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak_server
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloakdb:5432/keycloak
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    command: start-dev
+    depends_on:
+      - keycloakdb
+    ports:
+      - "8080:8080"
+    restart: always
+
   db:
     image: postgres:latest
     environment:
@@ -40,10 +62,22 @@ services:
       - "5431:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-U", $POSTGRES_USER, "-d", $POSTGRES_DB]
-      interval: 30s
-      timeout: 5s
-      retries: 5
+
+  keycloakdb:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: ${KEYCLOAK_DB_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+
 volumes:
   db_data:
+  keycloak_db_data:
+
+networks:
+  keycloak_network:
+    driver: bridge
