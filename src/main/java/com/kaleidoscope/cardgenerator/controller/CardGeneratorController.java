@@ -4,7 +4,6 @@ import com.kaleidoscope.cardgenerator.model.CardTemplate;
 import com.kaleidoscope.cardgenerator.service.CardTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +16,6 @@ public class CardGeneratorController {
 
     @Autowired
     private CardTemplateService cardTemplateService;
-
-    @Autowired
-    UserDetailsService userDetailsService;
 
     @GetMapping
     public String basePage(Model model) {

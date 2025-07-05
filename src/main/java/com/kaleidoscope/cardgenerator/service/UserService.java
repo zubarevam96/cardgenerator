@@ -25,9 +25,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
     public User save(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new UserAlreadyExistAuthenticationException(
@@ -43,17 +40,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public boolean authenticate(String username, String password) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password));
-
-        return authentication.isAuthenticated();
-    }
-
     public User getCurrentUser() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return getByUsername(principal.getUsername());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return getByUsername(username);
     }
 
     public User getByUsername(String username) {

@@ -10,7 +10,7 @@ spring:
     resources:
       static-locations: file:/app/static/
   datasource:
-    url: jdbc:postgresql://db:5432/card_generator_db
+    url: jdbc:postgresql://localhost:5431/card_generator_db
     driverClassName: org.postgresql.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -21,8 +21,40 @@ spring:
     hibernate.ddl-auto: update
     show-sql: true
     properties.hibernate.jdbc.lob.non_contextual_creation: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://localhost:8080/realms/cardgenerator
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+
+
+#    oauth2:
+#      client:
+#        registration:
+#          keycloak:
+#            provider: keycloak
+#            redirect-uri: https://localhost:8082/home
+#            authorization-grant-type: authorization_code
+#            client-id: card-generator
+#            client-secret: ofy8xVMai4T9Ni5qpCm44MfVQNT5RqWG
+#            scope: openid,profile,roles
+#        provider:
+#          keycloak:
+#          issuer-uri: http://keycloak_server:8080/realms/cardgenerator
+
+
+
 jwt:
   expiration: 108_000_000 # 30 days in millis
+keycloak:
+  auth-server-url: http://keycloak_server:8080/auth
+  realm: cardgenerator
+  resource: card-generator
+  public-client: true
+  principal-attribute: preferred_username
+
 logging.level.org:
-  springframework: DEBUG
+  springframework: INFO
   springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger: OFF
