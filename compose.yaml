@@ -19,6 +19,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/card_generator_db
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_THYMELEAF_PREFIX: file:/app/templates/
+      WEB_RESOURCES_STATIC-LOCATIONS: file:/app/static/
     volumes:
       - ./src/main/resources/static:/app/static
       - ./src/main/resources/templates:/app/templates

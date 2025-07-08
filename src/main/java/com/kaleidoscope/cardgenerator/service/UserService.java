@@ -1,15 +1,10 @@
 package com.kaleidoscope.cardgenerator.service;
 
-import com.kaleidoscope.cardgenerator.exception.UserAlreadyExistAuthenticationException;
 import com.kaleidoscope.cardgenerator.model.User;
 import com.kaleidoscope.cardgenerator.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,17 +19,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    public User save(User user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new UserAlreadyExistAuthenticationException(
-                    "User with name '" + user.getUsername() + "' already exists");
-        }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepository.save(user);
-    }
 
     public List<User> findAll() {
         return userRepository.findAll();
