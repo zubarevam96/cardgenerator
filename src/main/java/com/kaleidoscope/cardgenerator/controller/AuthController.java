@@ -28,6 +28,14 @@ public class AuthController {
         return "login";
     }
 
+    @PostMapping("/perform-login")
+    public String loginUser(@RequestParam String username,
+                            @RequestParam String password,
+                            HttpSession session) {
+        String token = keycloakService.getToken(username, password);
+        session.setAttribute("access_token", token);
+        return "redirect:/home";
+    }
 
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,

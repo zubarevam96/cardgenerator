@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@Component
+@Service
 public class KeycloakService {
-    private final static Logger log = LoggerFactory.getLogger(KeycloakService.class);
+    private final static Logger logger = LoggerFactory.getLogger(KeycloakService.class);
 
     @Value("${keycloak.realm}")
     private String keycloakRealm;
@@ -47,12 +47,10 @@ public class KeycloakService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(adminToken);
 
-        log.info("Sending request to {} with headers {} and body {}", url, headers, body);
-
         //noinspection rawtypes
         ResponseEntity<Map> response = new RestTemplate().postForEntity(
                 url, new HttpEntity<>(body, headers), Map.class);
-        log.info("Registered new user '{}' in keycloak", username);
+        logger.info("Registered new user '{}' in keycloak", username);
     }
 
     private String getAdminToken() {
@@ -67,7 +65,6 @@ public class KeycloakService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         var request = new HttpEntity<>(body, headers);
 
-        log.info("Sending request for admin token at {}", url);
         //noinspection rawtypes
         ResponseEntity<Map> response = new RestTemplate().postForEntity(url, request, Map.class);
 
@@ -79,5 +76,37 @@ public class KeycloakService {
 
         //noinspection DataFlowIssue
         return (String) response.getBody().get("access_token");
+    }
+
+    public String getToken(String username, String password) {
+        String url = keycloakServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/token";
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "password");
+        body.add("client_id", clientId);
+        body.add("client_secret", clientSecret);
+        body.add("username", username);
+        body.add("password", password);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        var request = new HttpEntity<>(body, headers);
+
+        try {
+            //noinspection rawtypes
+            ResponseEntity<Map> response = new RestTemplate().postForEntity(url, request, Map.class);
+
+            if (response.getStatusCode() != HttpStatus.OK) {
+                throw new AuthorizationDeniedException("Error while getting user token - " +
+                        "received response with status code " + response.getStatusCode() +
+                        " and body " + response.getBody());
+            }
+
+            //noinspection DataFlowIssue
+            return (String) response.getBody().get("access_token");
+        } catch (HttpClientErrorException e) {
+            logger.error("Failed to get token for user {}: {}", username, e.getMessage());
+            throw new AuthorizationDeniedException("Invalid username or password");
+        }
     }
 }

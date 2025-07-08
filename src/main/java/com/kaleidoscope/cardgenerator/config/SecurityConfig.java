@@ -17,16 +17,17 @@ public class SecurityConfig {
         http
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/register", "/login", "/error", "/styles.css").permitAll()
+                        .requestMatchers("/register", "/login", "/error", "/styles.css", "/perform-login").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .loginProcessingUrl("/login")
                         .successHandler((request, response, auth) ->
                                 response.sendRedirect("/home")))
                 .oauth2ResourceServer(server ->
                         server.jwt(Customizer.withDefaults()))
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
         return http.build();
     }

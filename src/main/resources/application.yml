@@ -31,31 +31,5 @@ keycloak:
   resource: card-generator
   client-secret: secret
 
-#    oauth2:
-#      client:
-#        registration:
-#          keycloak:
-#            provider: keycloak
-#            redirect-uri: https://localhost:8082/home
-#            authorization-grant-type: authorization_code
-#            client-id: card-generator
-#            client-secret: ofy8xVMai4T9Ni5qpCm44MfVQNT5RqWG
-#            scope: openid,profile,roles
-#        provider:
-#          keycloak:
-#          issuer-uri: http://keycloak_server:8080/realms/cardgenerator
-
-
-#
-#jwt:
-#  expiration: 108_000_000 # 30 days in millis
-#keycloak:
-#  auth-server-url: http://keycloak_server:8080/auth
-#  realm: cardgenerator
-#  resource: card-generator
-#  public-client: true
-#  principal-attribute: preferred_username
-#
-#logging.level.org:
-#  springframework: INFO
-#  springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger: OFF
+logging.level.org:
+  springframework: DEBUG
