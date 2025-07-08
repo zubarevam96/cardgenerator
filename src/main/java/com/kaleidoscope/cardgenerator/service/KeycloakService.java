@@ -52,6 +52,7 @@ public class KeycloakService {
         //noinspection rawtypes
         ResponseEntity<Map> response = new RestTemplate().postForEntity(
                 url, new HttpEntity<>(body, headers), Map.class);
+        log.info("Registered new user '{}' in keycloak", username);
     }
 
     private String getAdminToken() {

@@ -2,6 +2,7 @@ package com.kaleidoscope.cardgenerator.controller;
 
 import com.kaleidoscope.cardgenerator.service.UserService;
 import com.kaleidoscope.cardgenerator.service.KeycloakService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,7 @@ public class AuthController {
     public String loginPage() {
         return "login";
     }
+
 
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,
@@ -53,7 +55,7 @@ public class AuthController {
         }
 
         try {
-            keycloakService.createUser(username, password);
+            userService.createUser(username, password);
         } catch (HttpClientErrorException e) {
             model.addAttribute("error", e.getLocalizedMessage());
             return "register";
