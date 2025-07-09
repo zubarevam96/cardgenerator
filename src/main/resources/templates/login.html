@@ -6,10 +6,10 @@
 </head>
 <body>
 <h2>Login</h2>
-<div th:if="${param.error}" class="error">
-  Invalid username or password
+<div th:if="${error}" class="error" th:text="${error}">
+  Registration error
 </div>
-<form th:action="@{/perform-login}" method="post">
+<form th:action="@{/login}" method="post">
   <div class="form-group">
     <label for="username-input">Username:</label>
     <input type="text" id="username-input" name="username" required/>
@@ -19,7 +19,7 @@
     <input type="password" id="password-input" name="password" required/>
   </div>
   <button type="submit">Login</button>
-  <p>Don't have an account? <a th:href="@{/register}">Register here</a></p>
+  <p>Don't have an account? <a th:href="@{/register}">Register here</a>
 </form>
 </body>
 </html>

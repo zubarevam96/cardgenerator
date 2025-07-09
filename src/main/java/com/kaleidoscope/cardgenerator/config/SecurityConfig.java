@@ -2,7 +2,6 @@ package com.kaleidoscope.cardgenerator.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,15 +16,11 @@ public class SecurityConfig {
         http
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/register", "/login", "/error", "/styles.css", "/perform-login").permitAll()
+                        .requestMatchers("/register", "/login", "/error", "/styles.css").permitAll()
                         .anyRequest().authenticated())
-                .formLogin(form -> form
+                .oauth2Login(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .successHandler((request, response, auth) ->
-                                response.sendRedirect("/home")))
-                .oauth2ResourceServer(server ->
-                        server.jwt(Customizer.withDefaults()))
+                        .defaultSuccessUrl("/home", true))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
