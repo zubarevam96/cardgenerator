@@ -43,8 +43,8 @@ keycloak:
   realm: cardgenerator
   auth-server-url: http://localhost:8080
   client-id: card-generator
-  resource: card-generator
-  client-secret: secret
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
 
-logging.level.org:
-  springframework: DEBUG
+logging.level:
+  root: DEBUG
+  org.springframework: DEBUG
